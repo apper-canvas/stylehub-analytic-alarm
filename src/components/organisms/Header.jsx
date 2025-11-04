@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SearchBar from "@/components/molecules/SearchBar";
-import ApperIcon from "@/components/ApperIcon";
+import { useSelector } from "react-redux";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useAuth } from "@/layouts/Root";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import SearchBar from "@/components/molecules/SearchBar";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { logout } = useAuth();
 
   const categories = [
-    { name: "Men", path: "/category/men" },
     { name: "Women", path: "/category/women" },
+    { name: "Men", path: "/category/men" },
     { name: "Kids", path: "/category/kids" },
-    { name: "Accessories", path: "/category/accessories" },
     { name: "Sale", path: "/sale" }
   ];
 
@@ -23,6 +27,10 @@ const Header = () => {
     if (query.trim()) {
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -90,6 +98,39 @@ const Header = () => {
                 </span>
               )}
             </Link>
+
+            {/* Authentication Actions */}
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-secondary hidden sm:inline">
+                  Hi, {user?.firstName || user?.name || 'User'}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  icon="LogOut"
+                >
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                >
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button
+                  size="sm"
+                  asChild
+                >
+                  <Link to="/signup">Sign Up</Link>
+                </Button>
+              </div>
+            )}
 
             {/* Mobile Menu Toggle */}
             <button

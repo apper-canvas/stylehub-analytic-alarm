@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import ProductGrid from "@/components/organisms/ProductGrid";
-import FilterSidebar from "@/components/organisms/FilterSidebar";
-import FilterChips from "@/components/molecules/FilterChips";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
 import { productService } from "@/services/api/productService";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import ProductGrid from "@/components/organisms/ProductGrid";
+import FilterSidebar from "@/components/organisms/FilterSidebar";
+import FilterChips from "@/components/molecules/FilterChips";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -22,7 +22,7 @@ const ProductsPage = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, wishlistItems } = useWishlist();
 
-  const loadProducts = async () => {
+const loadProducts = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -51,7 +51,7 @@ const ProductsPage = () => {
     }
   }, [searchParams]);
 
-  // Apply filters and sorting
+// Apply filters and sorting
   useEffect(() => {
     let filtered = [...products];
 
@@ -138,10 +138,11 @@ const ProductsPage = () => {
     setFilters({});
   };
 
-  // Get unique values for filter options
+// Get unique values for filter options
   const categories = [...new Set(products.map(p => p.category))];
   const brands = [...new Set(products.map(p => p.brand))];
 
+  // Sort options for dropdown
   const sortOptions = [
     { value: "popularity", label: "Popularity" },
     { value: "newest", label: "Newest First" },

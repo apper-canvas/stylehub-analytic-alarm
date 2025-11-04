@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import ProductGrid from "@/components/organisms/ProductGrid";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
 import { productService } from "@/services/api/productService";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import ProductGrid from "@/components/organisms/ProductGrid";
 
 const HomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -16,12 +16,11 @@ const HomePage = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, wishlistItems } = useWishlist();
 
-  const loadFeaturedProducts = async () => {
+const loadFeaturedProducts = async () => {
     try {
       setLoading(true);
       setError(null);
-      const products = await productService.getAll();
-      // Get first 8 products as featured
+      const products = await productService.getFeatured();
       setFeaturedProducts(products.slice(0, 8));
     } catch (err) {
       setError(err.message || "Failed to load featured products");

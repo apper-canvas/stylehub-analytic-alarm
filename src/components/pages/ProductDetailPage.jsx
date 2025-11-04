@@ -60,7 +60,7 @@ const ProductDetailPage = () => {
       return;
     }
 
-    const cartItem = {
+const cartItem = {
       productId: product.Id.toString(),
       title: product.title,
       image: product.images[0],
@@ -75,7 +75,7 @@ const ProductDetailPage = () => {
   };
 
   const handleToggleWishlist = () => {
-    const wishlistItem = {
+const wishlistItem = {
       productId: product.Id.toString(),
       title: product.title,
       image: product.images[0],

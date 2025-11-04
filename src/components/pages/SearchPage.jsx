@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { productService } from "@/services/api/productService";
+import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
+import Button from "@/components/atoms/Button";
 import ProductGrid from "@/components/organisms/ProductGrid";
 import FilterSidebar from "@/components/organisms/FilterSidebar";
 import FilterChips from "@/components/molecules/FilterChips";
 import SearchBar from "@/components/molecules/SearchBar";
-import Button from "@/components/atoms/Button";
-import { productService } from "@/services/api/productService";
-import { useCart } from "@/hooks/useCart";
-import { useWishlist } from "@/hooks/useWishlist";
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,20 +28,9 @@ const SearchPage = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await productService.getAll();
-      
-      // Filter products based on search query
-      const searchResults = data.filter(product =>
-        product.title.toLowerCase().includes(query.toLowerCase()) ||
-        product.brand.toLowerCase().includes(query.toLowerCase()) ||
-        product.category.toLowerCase().includes(query.toLowerCase()) ||
-        product.subcategory?.toLowerCase().includes(query.toLowerCase()) ||
-        product.description?.toLowerCase().includes(query.toLowerCase()) ||
-        product.tags?.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
-      );
-      
-      setProducts(searchResults);
-      setFilteredProducts(searchResults);
+      const data = await productService.search(query);
+      setProducts(data);
+      setFilteredProducts(data);
     } catch (err) {
       setError(err.message || "Failed to load search results");
     } finally {
@@ -148,15 +137,16 @@ const SearchPage = () => {
     setFilters({});
   };
 
-  // Get unique values for filter options
+// Get unique values for filter options
   const categories = [...new Set(products.map(p => p.category))];
   const brands = [...new Set(products.map(p => p.brand))];
 
+  // Sort options for dropdown
   const sortOptions = [
     { value: "popularity", label: "Popularity" },
-    { value: "newest", label: "Newest First" },
     { value: "price-low", label: "Price: Low to High" },
     { value: "price-high", label: "Price: High to Low" },
+    { value: "newest", label: "Newest First" },
     { value: "rating", label: "Customer Rating" }
   ];
 

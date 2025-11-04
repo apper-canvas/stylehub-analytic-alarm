@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProductGrid from "@/components/organisms/ProductGrid";
-import FilterSidebar from "@/components/organisms/FilterSidebar";
-import FilterChips from "@/components/molecules/FilterChips";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
 import { productService } from "@/services/api/productService";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import ProductGrid from "@/components/organisms/ProductGrid";
+import FilterSidebar from "@/components/organisms/FilterSidebar";
+import FilterChips from "@/components/molecules/FilterChips";
 
 const CategoryPage = () => {
   const { category } = useParams();
@@ -22,17 +22,13 @@ const CategoryPage = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, wishlistItems } = useWishlist();
 
-  const loadProducts = async () => {
+const loadProducts = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await productService.getAll();
-      // Filter products by category
-      const categoryProducts = data.filter(product => 
-        product.category.toLowerCase() === category.toLowerCase()
-      );
-      setProducts(categoryProducts);
-      setFilteredProducts(categoryProducts);
+      const data = await productService.getByCategory(category);
+      setProducts(data);
+      setFilteredProducts(data);
     } catch (err) {
       setError(err.message || "Failed to load products");
     } finally {
@@ -131,10 +127,11 @@ const CategoryPage = () => {
     setFilters({});
   };
 
-  // Get unique values for filter options
+// Get unique values for filter options
   const subcategories = [...new Set(products.map(p => p.subcategory).filter(Boolean))];
   const brands = [...new Set(products.map(p => p.brand))];
 
+  // Sort options for dropdown
   const sortOptions = [
     { value: "popularity", label: "Popularity" },
     { value: "newest", label: "Newest First" },
@@ -143,6 +140,7 @@ const CategoryPage = () => {
     { value: "rating", label: "Customer Rating" }
   ];
 
+  // Category display name
   const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
 
   return (
